@@ -22,12 +22,15 @@ namespace warehouse_picking
         {
             var rnd = new Random();
             //const int nbBlock = 1;
-            int nbBlock = rnd.Next(1, 5);
-            int nbAisles = rnd.Next(1, 20);
-            int aisleLenght = rnd.Next(5, 25);
-            //int nbBlock = 2;
-            //int nbAisles = 6;
-            //int aisleLenght = 1;
+            //int nbBlock = rnd.Next(1, 5);
+            //int nbAisles = rnd.Next(1, 20);
+            //int aisleLenght = rnd.Next(5, 25);
+            int nbBlock = 2;
+            int nbAisles = 12;
+            int aisleLenght = 15;
+            // <image url="$(ProjectDir)\DocumentImages\ShortestPickRoute.png" scale="0.4" />
+            nbAisles = 8;
+            aisleLenght = 3;
             if (_drawer == null)
             {
                 _drawer = new Drawer();
@@ -36,14 +39,36 @@ namespace warehouse_picking
             {
                 _drawer.Clear();
             }
-            int wishSize = rnd.Next(1, nbBlock*nbAisles*aisleLenght)/1;
+            //int wishSize = rnd.Next(1, nbBlock * nbAisles * aisleLenght) / 1;
+            int wishSize = 24;
+            wishSize = 6;
+            //拣货问题
             var problem = WarehousePickingCoreGenerator.GenerateProblem(nbBlock, nbAisles, aisleLenght, wishSize);
             var warehouse = problem.Item1;
             IPickings pickings = problem.Item2;
+
+            // <image url="$(ProjectDir)\DocumentImages\ShortestPickRoute_PickData.png"/>
+            //按实例订单创建
+            var pickInfos = new List<PickingPos>()
+                {
+                    new PickingPos(9,1,3,3,3,2),
+                    new PickingPos(11,1,4,2,3,2),
+
+                    new PickingPos(25,2,1,1,3,2),
+                    new PickingPos(27,2,1,3,3,2),
+                    new PickingPos(40,2,6,1,3,2),
+                    new PickingPos(47,2,8,2,3,2),
+                };
+            var createdPickings = new Pickings(warehouse, pickInfos);
+            problem = WarehousePickingCoreGenerator.GenerateProblem(nbBlock, nbAisles, aisleLenght, createdPickings);
+            warehouse = problem.Item1;
+            pickings = problem.Item2;
+
             _drawer.DrawWarehouse(warehouse);
             Paint += _drawer.Drawing_handler;
             _drawer.DrawPickingObjectif(pickings);
             Refresh();
+
             _currentWarehouse = warehouse;
             _currentPickings = pickings;
             _dummySolver = null;
@@ -69,7 +94,7 @@ namespace warehouse_picking
 
                 if (isHoritontalMouvement)
                 {
-                    var moveOnY = shiftPoint.Y%(currentWarehouse.AisleLenght + 2);
+                    var moveOnY = shiftPoint.Y % (currentWarehouse.AisleLenght + 2);
                     if (moveOnY != 0 && moveOnY != currentWarehouse.AisleLenght + 1)
                     {
                         var error = "Forbidden move " + shiftPoint + " to " + nextShiftPoint;
@@ -80,7 +105,7 @@ namespace warehouse_picking
                 }
                 else
                 {
-                    if (shiftPoint.X%3 == 1 && nextShiftPoint.X%3 == 1 && shiftPoint.X == nextShiftPoint.X) continue;
+                    if (shiftPoint.X % 3 == 1 && nextShiftPoint.X % 3 == 1 && shiftPoint.X == nextShiftPoint.X) continue;
                     var error = "Forbidden move " + shiftPoint + " to " + nextShiftPoint;
                     Console.WriteLine(error);
                     MessageBox.Show(error);
@@ -96,7 +121,6 @@ namespace warehouse_picking
         private ISolver _largestGapSolver;
         private ISolver _returnSolver;
         private ISolver _compositeSolver;
-
 
         private void DummySolver_Click(object sender, EventArgs e)
         {
@@ -123,7 +147,7 @@ namespace warehouse_picking
 
         private ISolution SimplifySolution(ISolution s)
         {
-            var simplifiedSolution = new DummySolution {ShiftPointList = new List<ShiftPoint>(), Color = s.Color};
+            var simplifiedSolution = new DummySolution { ShiftPointList = new List<ShiftPoint>(), Color = s.Color };
             var origin = s.ShiftPointList[0];
             simplifiedSolution.ShiftPointList.Add(origin);
             var destination = s.ShiftPointList[1];
@@ -249,5 +273,3 @@ namespace warehouse_picking
         }
     }
 }
-
-

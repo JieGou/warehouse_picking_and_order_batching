@@ -1,0 +1,15 @@
+﻿################################################################################
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+################################################################################
+
+/warehouse_picking/.vs/warehouse_picking
+/warehouse_picking/warehouse_picking/.vs
+/warehouse_picking/warehouse_picking.Tests/.vs
+.nuget
+.nuget
+/warehouse_picking2/.vs/warehouse_picking
+/warehouse_picking2/warehouse_picking/.vs
+bin
+/warehouse_picking2/warehouse_picking.Tests/.vs
+/warehouse_picking2/warehouse_picking_console/.vs
+/warehouse_picking2/warehouse_picking_core/.vs
